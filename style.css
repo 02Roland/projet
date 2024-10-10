@@ -1,0 +1,38 @@
+:root {
+    --ucb-red: #FF0000;
+    --ucb-black: #000000;
+    --ucb-white: #FFFFFF;
+    --ucb-gray: #F5F5F5;
+}
+html, body{
+    height: 100vh;
+    background-color: black;
+}
+.navbar {
+    background-color: var(--ucb-black);
+    padding: 1rem 0;
+}
+.sd{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+}
+button{
+    background-color: yellow;
+}
+form{
+    background-color: white;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px black;
+}
+
+p{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+span{
+    color: red;
+}

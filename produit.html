@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCB - Page des Produits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff3b3b;
+            --secondary-color: #1e1e1e;
+            --background-color: #f4f4f4;
+            --text-color: #333333;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
+        }
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .bottom-nav {
+            background-color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 0;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+        .bottom-nav .nav-link {
+            color: var(--text-color);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .bottom-nav .nav-link i {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .bottom-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #ff0000;
+            border-color: #ff0000;
+        }
+        .filter-dropdown {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <h1 class="mb-4">Nos Produits</h1>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un produit...">
+            </div>
+            <div class="col-md-3">
+                <select id="categoryFilter" class="form-select filter-dropdown">
+                    <option value="">Toutes les catégories</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Économique">Économique</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="sortOrder" class="form-select filter-dropdown">
+                    <option value="priceLowHigh">Prix : croissant</option>
+                    <option value="priceHighLow">Prix : décroissant</option>
+                    <option value="nameAZ">Nom : A-Z</option>
+                    <option value="nameZA">Nom : Z-A</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="productList" class="row">
+            <!-- Products will be dynamically added here -->
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <a class="nav-link" href="index.html">
+                        <i class="fas fa-home"></i>
+                        Accueil
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link active" href="#">
+                        <i class="fas fa-box"></i>
+                        Produits
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-chart-line"></i>
+                        Investir
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-users"></i>
+                        Équipe
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-user"></i>
+                        Profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Product Details Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Détails du Produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="productModalBody">
+                    <!-- Product details will be dynamically added here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="addToCartBtn">Ajouter au panier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const products = [
+            { id: 1, name: "UCB VIP 1", category: "VIP", price: 100, dailyReturn: 0.5, duration: 45, image: "https://via.placeholder.com/300x200.png?text=UCB+VIP+1", description: "Notre bouteille VIP d'entrée de gamme, parfaite pour commencer votre aventure UCB." },
+            { id: 2, name: "UCB VIP 2", category: "VIP", price: 200, dailyReturn: 0.7, duration: 45, image: "https://via.placeholder.com/300x200.png?text=UCB+VIP+2", description: "Une bouteille VIP de milieu de gamme offrant un excellent rapport qualité-prix." },
+            { id: 3, name: "UCB VIP 3", category: "VIP", price: 300, dailyReturn: 1.0, duration: 45, image: "https://via.placeholder.com/300x200.png?text=UCB+VIP+3", description: "Notre bouteille VIP haut de gamme pour les investisseurs sérieux." },
+            { id: 4, name: "UCB Standard", category: "Standard", price: 50, dailyReturn: 0.3, duration: 30, image: "https://via.placeholder.com/300x200.png?text=UCB+Standard", description: "Une bouteille standard pour ceux qui veulent tester le concept UCB." },
+            { id: 5, name: "UCB Économique", category: "Économique", price: 25, dailyReturn: 0.2, duration: 30, image: "https://via.placeholder.com/300x200.png?text=UCB+Économique", description: "Notre option la plus abordable pour débuter avec UCB." },
+        ];
+
+        function displayProducts(productsToShow) {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            productsToShow.forEach(product => {
+                productList.innerHTML += `
+                    <div class="col-md-4 mb-4">
+                        <div class="product-card">
+                            <img src="${product.image}" alt="${product.name}" class="product-image">
+                            <h3>${product.name}</h3>
+                            <p>Prix: ${product.price} XAF</p>
+                            <p>Retour quotidien: ${product.dailyReturn}%</p>
+                            <button class="btn btn-primary w-100" onclick="showProductDetails(${product.id})">Voir les détails</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showProductDetails(productId) {
+            const product = products.find(p => p.id === productId);
+            const modalBody = document.getElementById('productModalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${product.image}" alt="${product.name}" class="img-fluid">
+                    </div>
+                    <div class="col-md-6">
+                        <h2>${product.name}</h2>
+                        <p><strong>Catégorie:</strong> ${product.category}</p>
+                        <p><strong>Prix:</strong> ${product.price} XAF</p>
+                        <p><strong>Retour quotidien:</strong> ${product.dailyReturn}%</p>
+                        <p><strong>Durée:</strong> ${product.duration} jours</p>
+                        <p>${product.description}</p>
+                    </div>
+                </div>
+            `;
+            const modal = new bootstrap.Modal(document.getElementById('productModal'));
+            modal.show();
+        }
+
+        function filterAndSortProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+
+            let filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) &&
+                (category === '' || product.category === category)
+            );
+
+            filteredProducts.sort((a, b) => {
+                switch (sortOrder) {
+                    case 'priceLowHigh':
+                        return a.price - b.price;
+                    case 'priceHighLow':
+                        return b.price - a.price;
+                    case 'nameAZ':
+                        return a.name.localeCompare(b.name);
+                    case 'nameZA':
+                        return b.name.localeCompare(a.name);
+                    default:
+                        return 0;
+                }
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterAndSortProducts);
+        document.getElementById('categoryFilter').addEventListener('change', filterAndSortProducts);
+        document.getElementById('sortOrder').addEventListener('change', filterAndSortProducts);
+
+        document.getElementById('addToCartBtn').addEventListener('click', function() {
+            alert('Produit ajouté au panier !');
+            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+        });
+
+        // Initial display of products
+        displayProducts(products);
+    </script>
+</body>
+</html>

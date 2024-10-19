@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCB - Page d'Investissement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff3b3b;
+            --secondary-color: #1e1e1e;
+            --background-color: #f4f4f4;
+            --text-color: #333333;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
+        }
+        .investment-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .investment-card:hover {
+            transform: translateY(-5px);
+        }
+        .bottom-nav {
+            background-color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 0;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+        .bottom-nav .nav-link {
+            color: var(--text-color);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .bottom-nav .nav-link i {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .bottom-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #ff0000;
+            border-color: #ff0000;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <h1 class="mb-4">Investir avec UCB</h1>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="investment-card">
+                    <h2>Votre Portefeuille</h2>
+                    <p>Valeur totale : <span id="totalValue">0</span> XAF</p>
+                    <p>Rendement total : <span id="totalReturn">0</span> XAF</p>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="investment-card">
+                    <h2>Nouvel Investissement</h2>
+                    <form id="investmentForm">
+                        <div class="mb-3">
+                            <label for="investmentAmount" class="form-label">Montant à investir (XAF)</label>
+                            <input type="number" class="form-control" id="investmentAmount" required min="1000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="investmentDuration" class="form-label">Durée (jours)</label>
+                            <select class="form-select" id="investmentDuration" required>
+                                <option value="30">30 jours</option>
+                                <option value="60">60 jours</option>
+                                <option value="90">90 jours</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Investir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="investment-card">
+            <h2>Vos Investissements Actifs</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Montant</th>
+                            <th>Durée</th>
+                            <th>Rendement Quotidien</th>
+                            <th>Rendement Total</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activeInvestments">
+                        <!-- Les investissements actifs seront ajoutés ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="investment-card">
+            <h2>Historique des Investissements</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Montant</th>
+                            <th>Durée</th>
+                            <th>Rendement Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="investmentHistory">
+                        <!-- L'historique des investissements sera ajouté ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <a class="nav-link" href="index.html">
+                        <i class="fas fa-home"></i>
+                        Accueil
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="products.html">
+                        <i class="fas fa-box"></i>
+                        Produits
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link active" href="#">
+                        <i class="fas fa-chart-line"></i>
+                        Investir
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-users"></i>
+                        Équipe
+                    </a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-user"></i>
+                        Profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Données simulées pour les investissements
+        let investments = [
+            { id: 1, date: '2023-05-01', amount: 10000, duration: 30, dailyReturn: 0.5, totalReturn: 1500, status: 'En cours' },
+            { id: 2, date: '2023-04-15', amount: 5000, duration: 60, dailyReturn: 0.7, totalReturn: 2100, status: 'En cours' },
+            { id: 3, date: '2023-03-01', amount: 20000, duration: 90, dailyReturn: 1.0, totalReturn: 9000, status: 'Terminé' }
+        ];
+
+        function updateInvestmentTables() {
+            const activeInvestments = document.getElementById('activeInvestments');
+            const investmentHistory = document.getElementById('investmentHistory');
+            
+            activeInvestments.innerHTML = '';
+            investmentHistory.innerHTML = '';
+
+            investments.forEach(inv => {
+                if (inv.status === 'En cours') {
+                    activeInvestments.innerHTML += `
+                        <tr>
+                            <td>${inv.date}</td>
+                            <td>${inv.amount} XAF</td>
+                            <td>${inv.duration} jours</td>
+                            <td>${inv.dailyReturn}%</td>
+                            <td>${inv.totalReturn} XAF</td>
+                            <td>${inv.status}</td>
+                        </tr>
+                    `;
+                } else {
+                    investmentHistory.innerHTML += `
+                        <tr>
+                            <td>${inv.date}</td>
+                            <td>${inv.amount} XAF</td>
+                            <td>${inv.duration} jours</td>
+                            <td>${inv.totalReturn} XAF</td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function updatePortfolioSummary() {
+            const totalValue = investments.reduce((sum, inv) => sum + inv.amount, 0);
+            const totalReturn = investments.reduce((sum, inv) => sum + inv.totalReturn, 0);
+            
+            document.getElementById('totalValue').textContent = totalValue.toLocaleString();
+            document.getElementById('totalReturn').textContent = totalReturn.toLocaleString();
+
+            // Mise à jour du graphique
+            const ctx = document.getElementById('portfolioChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Investissement Initial', 'Rendement'],
+                    datasets: [{
+                        data: [totalValue, totalReturn],
+                        backgroundColor: ['#ff3b3b', '#1e1e1e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        document.getElementById('investmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('investmentAmount').value);
+            const duration = parseInt(document.getElementById('investmentDuration').value);
+            const dailyReturn = 0.5 + (duration / 30) * 0.1; // Rendement quotidien augmente avec la durée
+            const totalReturn = Math.round(amount * (dailyReturn / 100) * duration);
+
+            const newInvestment = {
+                id: investments.length + 1,
+                date: new Date().toISOString().split('T')[0],
+                amount: amount,
+                duration: duration,
+                dailyReturn: dailyReturn.toFixed(1),
+                totalReturn: totalReturn,
+                status: 'En cours'
+            };
+
+            investments.push(newInvestment);
+            updateInvestmentTables();
+            updatePortfolioSummary();
+            this.reset();
+            alert('Investissement effectué avec succès !');
+        });
+
+        // Initialisation
+        updateInvestmentTables();
+        updatePortfolioSummary();
+    </script>
+</body>
+</html>
